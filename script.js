@@ -1006,7 +1006,7 @@ class SistemaTabacaria {
 
         lista.innerHTML = produtosFiltrados.map(produto => {
             const categoria = this.getCategoriaIcon(produto.categoria);
-            const estoqueStatus = produto.estoque <= 5 ? 'baixo' : produto.estoque === 0 ? 'zero' : 'normal';
+            const estoqueStatus = produto.estoque === 0 ? 'zero' : produto.estoque <= 5 ? 'baixo' : 'normal';
             const margem = produto.preco > 0 ? ((produto.preco - produto.custo) / produto.preco * 100).toFixed(1) : 0;
             
             return `
@@ -1531,32 +1531,36 @@ function filtrarProdutos(filtro, elemento = null) {
     tabs.forEach(tab => tab.classList.remove('active'));
     
     // Se elemento foi passado, usar ele; senão, usar event.target
-    const targetElement = elemento || event.target;
+    const targetElement = elemento || (typeof event !== 'undefined' ? event.target : null);
     if (targetElement) {
         targetElement.classList.add('active');
     }
     
+    // Mostrar todos os cards primeiro
     cards.forEach(card => {
-        const categoria = card.dataset.categoria;
-        const estoque = card.dataset.estoque;
-        
-        let mostrar = true;
-        
-        switch(filtro) {
-            case 'baixo-estoque':
-                mostrar = estoque === 'baixo';
-                break;
-            case 'sem-estoque':
-                mostrar = estoque === 'zero';
-                break;
-            case 'todos':
-            default:
-                mostrar = true;
-                break;
-        }
-        
-        card.style.display = mostrar ? 'block' : 'none';
+        card.style.display = 'block';
     });
+    
+    // Aplicar filtro se não for 'todos'
+    if (filtro !== 'todos') {
+        cards.forEach(card => {
+            const estoque = card.dataset.estoque;
+            let mostrar = false;
+            
+            switch(filtro) {
+                case 'baixo-estoque':
+                    mostrar = estoque === 'baixo';
+                    break;
+                case 'sem-estoque':
+                    mostrar = estoque === 'zero';
+                    break;
+            }
+            
+            if (!mostrar) {
+                card.style.display = 'none';
+            }
+        });
+    }
 }
 
 // Função para buscar produtos
@@ -1640,7 +1644,7 @@ function calcularPreviewLucro() {
     }
 }
 
-function filtrarProdutos() {
+function buscarProdutosPorNome() {
     const busca = document.getElementById('buscar-produto').value.toLowerCase();
     const produtosFiltrados = sistema.produtos.filter(produto => 
         produto.nome.toLowerCase().includes(busca)
