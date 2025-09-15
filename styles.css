@@ -3000,3 +3000,238 @@ button:active {
         left: 10px;
     }
 }
+
+/* Novo layout dos cards de produto */
+.produto-card-novo {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    transition: all 0.3s ease;
+    position: relative;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.produto-card-novo:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+    border-color: #d1d5db;
+}
+
+.produto-header-novo {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+}
+
+.produto-nome {
+    color: #1f2937;
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 0;
+    flex: 1;
+}
+
+.produto-categoria-tag {
+    background: #f3f4f6;
+    color: #6b7280;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-left: 0.5rem;
+}
+
+.produto-status {
+    margin-left: auto;
+}
+
+.status-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-badge.estoque-ok {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.status-badge.estoque-baixo {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-badge.sem-estoque {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.produto-preco-novo {
+    background: #d1fae5;
+    border-radius: 8px;
+    padding: 0.75rem;
+    text-align: center;
+    margin-bottom: 0.75rem;
+    border: 1px solid #a7f3d0;
+}
+
+.preco-simbolo {
+    color: #065f46;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.preco-valor {
+    color: #065f46;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-left: 0.25rem;
+}
+
+.produto-detalhes-novo {
+    margin-bottom: 0.75rem;
+}
+
+.detalhe-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.detalhe-label-novo {
+    color: #6b7280;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    text-align: center;
+}
+
+.detalhe-valores {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.detalhe-valor-novo {
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.875rem;
+    padding: 0.25rem;
+    border-radius: 4px;
+}
+
+.estoque-valor {
+    color: #065f46;
+    background: #ecfdf5;
+}
+
+.custo-valor {
+    color: #92400e;
+    background: #fffbeb;
+}
+
+.margem-valor {
+    color: #1e40af;
+    background: #eff6ff;
+}
+
+.produto-actions-novo {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: space-between;
+}
+
+.btn-editar, .btn-estoque, .btn-excluir {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border: 1px solid;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+}
+
+.btn-editar {
+    background: #f59e0b;
+    color: white;
+    border-color: #f59e0b;
+}
+
+.btn-editar:hover {
+    background: #d97706;
+    border-color: #d97706;
+}
+
+.btn-estoque {
+    background: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+}
+
+.btn-estoque:hover {
+    background: #2563eb;
+    border-color: #2563eb;
+}
+
+.btn-excluir {
+    background: #ef4444;
+    color: white;
+    border-color: #ef4444;
+}
+
+.btn-excluir:hover {
+    background: #dc2626;
+    border-color: #dc2626;
+}
+
+/* Estilos para as abas de filtro */
+.filter-tabs-novo {
+    display: flex;
+    gap: 0;
+    margin-bottom: 1rem;
+    background: #f3f4f6;
+    border-radius: 8px;
+    padding: 0.25rem;
+}
+
+.filter-tab-novo {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: none;
+    background: transparent;
+    color: #6b7280;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.filter-tab-novo:hover {
+    background: rgba(255, 255, 255, 0.5);
+    color: #374151;
+}
+
+.filter-tab-novo.active {
+    background: #3b82f6;
+    color: white;
+    font-weight: 600;
+}
+
+.filter-tab-novo.active:hover {
+    background: #2563eb;
+}
