@@ -1010,44 +1010,51 @@ class SistemaTabacaria {
             const margem = produto.preco > 0 ? ((produto.preco - produto.custo) / produto.preco * 100).toFixed(1) : 0;
             
             return `
-                <div class="produto-card" data-categoria="${produto.categoria}" data-estoque="${estoqueStatus}">
-                    <div class="produto-header">
-                        <div class="produto-info">
-                            <h4>${produto.nome}</h4>
-                            <span class="produto-categoria">${categoria} ${produto.categoria}</span>
-                        </div>
-                        <div class="produto-preco">R$ ${produto.preco.toFixed(2).replace('.', ',')}</div>
-                    </div>
-                    
-                    <div class="produto-detalhes">
-                        <div class="detalhe-item">
-                            <div class="detalhe-label">Estoque</div>
-                            <div class="detalhe-valor" style="color: ${estoqueStatus === 'zero' ? '#e74c3c' : estoqueStatus === 'baixo' ? '#f39c12' : '#2ecc71'}">
-                                ${produto.estoque} un
-                            </div>
-                        </div>
-                        <div class="detalhe-item">
-                            <div class="detalhe-label">Custo</div>
-                            <div class="detalhe-valor">R$ ${produto.custo.toFixed(2).replace('.', ',')}</div>
-                        </div>
-                        <div class="detalhe-item">
-                            <div class="detalhe-label">Margem</div>
-                            <div class="detalhe-valor" style="color: ${margem < 10 ? '#e74c3c' : margem < 30 ? '#f39c12' : '#2ecc71'}">
-                                ${margem}%
-                            </div>
+                <div class="produto-card-novo" data-categoria="${produto.categoria}" data-estoque="${estoqueStatus}">
+                    <div class="produto-header-novo">
+                        <h4 class="produto-nome">${produto.nome}</h4>
+                        <span class="produto-categoria-tag">${categoria} ${produto.categoria}</span>
+                        <div class="produto-status">
+                            <span class="status-badge ${estoqueStatus === 'zero' ? 'sem-estoque' : estoqueStatus === 'baixo' ? 'estoque-baixo' : 'estoque-ok'}">
+                                ${estoqueStatus === 'zero' ? 'SEM ESTOQUE' : estoqueStatus === 'baixo' ? 'ESTOQUE BAIXO' : 'ESTOQUE OK'}
+                            </span>
                         </div>
                     </div>
                     
-                    <div class="produto-actions">
-                        <button class="btn-edit" onclick="editarProduto(${produto.id})">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <div class="produto-preco-novo">
+                        <span class="preco-simbolo">R$</span>
+                        <span class="preco-valor">${produto.preco.toFixed(2).replace('.', ',')}</span>
+                    </div>
+                    
+                    <div class="produto-detalhes-novo">
+                        <div class="detalhe-row">
+                            <span class="detalhe-label-novo">ESTOQUE</span>
+                            <span class="detalhe-label-novo">CUSTO</span>
+                            <span class="detalhe-label-novo">MARGEM</span>
+                        </div>
+                        <div class="detalhe-valores">
+                            <span class="detalhe-valor-novo estoque-valor">${produto.estoque} un</span>
+                            <span class="detalhe-valor-novo custo-valor">R$ ${produto.custo.toFixed(2).replace('.', ',')}</span>
+                            <span class="detalhe-valor-novo margem-valor">${margem}%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="produto-actions-novo">
+                        <button class="btn-editar" onclick="editarProduto(${produto.id})">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                                 <path d="m18.5 2.5 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                             </svg>
                             Editar
                         </button>
-                        <button class="btn-delete" onclick="excluirProduto(${produto.id})">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <button class="btn-estoque" onclick="abrirModalEstoque(${produto.id})">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-4m-4-4v8m0-8l3 3m-3-3l-3 3"/>
+                            </svg>
+                            Estoque
+                        </button>
+                        <button class="btn-excluir" onclick="excluirProduto(${produto.id})">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="3,6 5,6 21,6"/>
                                 <path d="m19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"/>
                             </svg>
@@ -1516,13 +1523,18 @@ function atualizarEstatisticas() {
 }
 
 // Função para filtrar produtos
-function filtrarProdutos(filtro) {
-    const cards = document.querySelectorAll('.produto-card');
-    const tabs = document.querySelectorAll('.filter-tab');
+function filtrarProdutos(filtro, elemento = null) {
+    const cards = document.querySelectorAll('.produto-card-novo');
+    const tabs = document.querySelectorAll('.filter-tab-novo');
     
     // Atualizar tabs ativas
     tabs.forEach(tab => tab.classList.remove('active'));
-    event.target.classList.add('active');
+    
+    // Se elemento foi passado, usar ele; senão, usar event.target
+    const targetElement = elemento || event.target;
+    if (targetElement) {
+        targetElement.classList.add('active');
+    }
     
     cards.forEach(card => {
         const categoria = card.dataset.categoria;
@@ -1966,4 +1978,29 @@ function showTab(tabName) {
     if (tabName === 'dashboard') {
         setTimeout(() => atualizarDashboardExecutivo(), 100);
     }
+}
+
+// Função para abrir modal de ajuste de estoque
+function abrirModalEstoque(id) {
+    const produto = sistema.produtos.find(p => p.id === id);
+    if (!produto) return;
+    
+    const quantidade = prompt(`Ajustar estoque de "${produto.nome}"\nEstoque atual: ${produto.estoque} unidades\n\nDigite a nova quantidade:`, produto.estoque);
+    
+    if (quantidade !== null && quantidade !== '') {
+        const novaQuantidade = parseInt(quantidade);
+        if (!isNaN(novaQuantidade) && novaQuantidade >= 0) {
+            produto.estoque = novaQuantidade;
+            sistema.salvarProdutos();
+            sistema.exibirProdutosFiltrados();
+            sistema.mostrarToast('Estoque atualizado com sucesso!', 'success');
+        } else {
+            sistema.mostrarModal('Erro', 'Por favor, digite um número válido maior ou igual a zero.', 'error');
+        }
+    }
+}
+
+// Função global para ajustar estoque (compatibilidade)
+function ajustarEstoque(id, quantidade) {
+    sistema.ajustarEstoque(id, quantidade);
 }
