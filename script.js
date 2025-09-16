@@ -329,11 +329,14 @@ class SistemaTabacaria {
         document.querySelectorAll('.payment-btn').forEach(btn => {
             btn.classList.remove('selected');
         });
-        
-        // Adicionar seleção atual
-        event.target.classList.add('selected');
+
+        // Adicionar seleção atual - Corrigindo o bug do event.target
+        const buttonClicked = document.querySelector(`[onclick="selecionarPagamento('${tipo}')"]`);
+        if (buttonClicked) {
+            buttonClicked.classList.add('selected');
+        }
         this.formaPagamento = tipo;
-        
+
         // Mostrar/ocultar seção de dinheiro
         const dinheiroSection = document.getElementById('dinheiro-section');
         if (tipo === 'dinheiro') {
@@ -1273,9 +1276,11 @@ class SistemaTabacaria {
             'debito': 'Cartão de Débito',
             'pix': 'PIX'
         };
-        
+
         let itensHtml = '';
+        console.log('Debug: Itens recebidos no modal:', itens); // Debug para verificar os dados
         itens.forEach(item => {
+            console.log('Debug: Item individual:', item); // Debug cada item
             const subtotal = item.preco * item.quantidade;
             itensHtml += `
                 <div class="venda-item-resumo">
@@ -1285,6 +1290,9 @@ class SistemaTabacaria {
                     </div>
                     <span class="item-subtotal">R$ ${subtotal.toFixed(2).replace('.', ',')}</span>
                 </div>
+            `;
+        });
+        console.log('Debug: HTML dos itens construído:', itensHtml); // Debug do HTML final
             `;
         });
         
@@ -1522,45 +1530,75 @@ function atualizarEstatisticas() {
     }
 }
 
-// Função para filtrar produtos
+// Função para filtrar produtos - VERSÃO CORRIGIDA
 function filtrarProdutos(filtro, elemento = null) {
-    const cards = document.querySelectorAll('.produto-card-novo');
-    const tabs = document.querySelectorAll('.filter-tab-novo');
-    
-    // Atualizar tabs ativas
-    tabs.forEach(tab => tab.classList.remove('active'));
-    
-    // Se elemento foi passado, usar ele; senão, usar event.target
-    const targetElement = elemento || (typeof event !== 'undefined' ? event.target : null);
-    if (targetElement) {
-        targetElement.classList.add('active');
-    }
-    
-    // Mostrar todos os cards primeiro
-    cards.forEach(card => {
-        card.style.display = 'block';
-    });
-    
-    // Aplicar filtro se não for 'todos'
-    if (filtro !== 'todos') {
-        cards.forEach(card => {
-            const estoque = card.dataset.estoque;
+    console.log('Filtro aplicado:', filtro);
+
+    // Aguardar um pouco para garantir que os produtos estejam renderizados
+    setTimeout(() => {
+        const cards = document.querySelectorAll('.produto-card-novo');
+        const tabs = document.querySelectorAll('.filter-tab-novo');
+
+        console.log('Cards encontrados:', cards.length);
+
+        // Se não há cards, tentar novamente após re-renderização
+        if (cards.length === 0) {
+            if (typeof sistema !== 'undefined' && sistema.exibirProdutosFiltrados) {
+                sistema.exibirProdutosFiltrados();
+                setTimeout(() => filtrarProdutos(filtro, elemento), 100);
+            }
+            return;
+        }
+
+        // Atualizar tabs ativas
+        tabs.forEach(tab => tab.classList.remove('active'));
+
+        // Ativar o botão clicado
+        const targetElement = elemento || (typeof event !== 'undefined' ? event.target : null);
+        if (targetElement) {
+            targetElement.classList.add('active');
+        }
+
+        // Aplicar filtro aos cards
+        let produtosVisiveis = 0;
+
+        cards.forEach((card, index) => {
+            const estoque = card.dataset.estoque || card.getAttribute('data-estoque');
+            console.log(`Card ${index}: estoque="${estoque}"`);
+
             let mostrar = false;
-            
+
             switch(filtro) {
+                case 'todos':
+                    mostrar = true;
+                    break;
                 case 'baixo-estoque':
                     mostrar = estoque === 'baixo';
                     break;
                 case 'sem-estoque':
                     mostrar = estoque === 'zero';
                     break;
+                default:
+                    mostrar = true;
             }
-            
-            if (!mostrar) {
+
+            if (mostrar) {
+                card.style.display = 'block';
+                produtosVisiveis++;
+            } else {
                 card.style.display = 'none';
             }
         });
-    }
+
+        // Atualizar contador
+        const contador = document.getElementById('contador-produtos');
+        if (contador) {
+            contador.textContent = `${produtosVisiveis} produtos`;
+        }
+
+        console.log(`Produtos visíveis: ${produtosVisiveis}`);
+
+    }, 50); // Delay pequeno para garantir renderização
 }
 
 // Função para buscar produtos
@@ -2007,4 +2045,9 @@ function abrirModalEstoque(id) {
 // Função global para ajustar estoque (compatibilidade)
 function ajustarEstoque(id, quantidade) {
     sistema.ajustarEstoque(id, quantidade);
+}
+
+// Função global para ajustar quantidade em formulários (compatibilidade)
+function adjustFormQuantity(inputId, change) {
+    sistema.adjustFormQuantity(inputId, change);
 }
